@@ -15,6 +15,7 @@ const io = new Server(server, {
     }
 });
 
+app.set('io', io);
 
 io.use(async (socket, next) => {
 
@@ -94,7 +95,7 @@ server.listen(port, () => {
 
 // In your addUserToProject controller, after updating the project:
 // Notify all added users and the current use
-io = req.app.get('io');
-[...users, loggedInUser._id].forEach(userId => {
-    io.to(`dashboard-${userId}`).emit('project-list-updated');
-});
+// io = req.app.get('io');
+// [...users, loggedInUser._id].forEach(userId => {
+//     io.to(`dashboard-${userId}`).emit('project-list-updated');
+// });
