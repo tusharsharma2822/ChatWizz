@@ -74,6 +74,10 @@ io.on('connection', socket => {
         io.to(socket.roomId).emit('project-message', data);
     });
 
+    socket.on('join-dashboard', (userId) => {
+        socket.join(`dashboard-${userId}`);
+    });
+
 
     socket.on('disconnect', () => {
         console.log('user disconnected');
@@ -87,3 +91,10 @@ io.on('connection', socket => {
 server.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
+
+// In your addUserToProject controller, after updating the project:
+// Notify all added users and the current user
+const io = req.app.get('io');
+[...users, loggedInUser._id].forEach(userId => {
+    io.to(`dashboard-${userId}`).emit('project-list-updated');
+});
