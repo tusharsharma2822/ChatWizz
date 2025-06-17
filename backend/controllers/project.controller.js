@@ -73,7 +73,13 @@ export const addUserToProject = async (req, res) => {
             users,
             userId: loggedInUser._id
         })
-
+        // --- Real-time dashboard update ---
+        const io = req.app.get('io');
+        if (io) {
+            [...users, loggedInUser._id].forEach(userId => {
+                io.to(`dashboard-${userId}`).emit('project-list-updated');
+            });
+        }
         return res.status(200).json({
             project,
         })
