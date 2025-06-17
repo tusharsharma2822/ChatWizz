@@ -64,6 +64,17 @@ io.on('connection', socket => {
     socket.join(socket.roomId);
 
 
+    // Listen for project-updated and broadcast to room
+    socket.on('project-updated', (data) => {
+        io.to(socket.roomId).emit('project-updated', data);
+    });
+
+    // Listen for project-message and broadcast to room
+    socket.on('project-message', (data) => {
+        io.to(socket.roomId).emit('project-message', data);
+    });
+
+
     socket.on('disconnect', () => {
         console.log('user disconnected');
         socket.leave(socket.roomId)
