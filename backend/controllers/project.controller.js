@@ -195,3 +195,14 @@ export const addMessage = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+export const getMe = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+        res.status(200).json({ user: req.user });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
