@@ -44,5 +44,17 @@ router.put('/update-file-tree',
     projectController.updateFileTree
 )
 
+router.get('/messages/:projectId',
+    authMiddleWare.authUser,
+    projectController.getProjectMessages
+);
+
+router.post('/messages',
+    authMiddleWare.authUser,
+    body('projectId').isString().withMessage('Project ID is required'),
+    body('message').isString().withMessage('Message is required'),
+    projectController.addMessage
+);
+
 
 export default router;
