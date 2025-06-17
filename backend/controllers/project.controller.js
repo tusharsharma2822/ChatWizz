@@ -2,6 +2,7 @@ import projectModel from '../models/project.model.js';
 import * as projectService from '../services/project.service.js';
 import userModel from '../models/user.model.js';
 import { validationResult } from 'express-validator';
+import Message from '../models/message.model.js';
 
 
 export const createProject = async (req, res) => {
@@ -157,3 +158,25 @@ export const updateFileTree = async (req, res) => {
     }
 
 }
+
+export const getProjectMessages = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const messages = await Message.find({ projectId }).populate('sender', 'email');
+        res.status(200).json({ messages });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+export const addMessage = async (req, res) => {
+    try {
+        const { projectId, message } = req.body;
+        const sender = req.user._id;
+        const newMessage = await Message.create({ projectId, sender, message });
+        await newMessage.populate('sender', 'email');
+        res.status(201).json({ message: newMessage });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
