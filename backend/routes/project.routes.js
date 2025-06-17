@@ -25,6 +25,13 @@ router.put('/add-user',
     projectController.addUserToProject
 )
 
+router.put('/add-user-by-email',
+    authMiddleWare.authUser,
+    body('projectId').isString().withMessage('Project ID is required'),
+    body('email').isEmail().withMessage('Valid email is required'),
+    projectController.addUserToProjectByEmail
+)
+
 router.get('/get-project/:projectId',
     authMiddleWare.authUser,
     projectController.getProjectById
