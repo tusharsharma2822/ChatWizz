@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import redisClient from "../services/redis.service.js";
+import userModel from "../models/user.model.js";
 
 
 export const authUser = async (req, res, next) => {
@@ -22,7 +23,12 @@ export const authUser = async (req, res, next) => {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+        // Fetch user from DB to get _id
+        const user = await userModel.findOne({ email: decoded.email });
+        if (!user) {
+            return res.status(401).send({ error: 'Unauthorized User' });
+        }
+        req.user = user; // Attach full user object
         next();
     } catch (error) {
         console.log(error);
