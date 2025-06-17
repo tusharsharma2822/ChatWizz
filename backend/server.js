@@ -93,8 +93,8 @@ server.listen(port, () => {
 })
 
 // In your addUserToProject controller, after updating the project:
-// Notify all added users and the current user
-const io = req.app.get('io');
+// Notify all added users and the current use
+io = req.app.get('io');
 [...users, loggedInUser._id].forEach(userId => {
     io.to(`dashboard-${userId}`).emit('project-list-updated');
 });
