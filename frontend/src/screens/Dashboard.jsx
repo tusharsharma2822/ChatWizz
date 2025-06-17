@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from "../context/user.context";
 import axios from "../config/axios";
 import { useNavigate } from 'react-router-dom';
+import { initializeSocket, receiveMessage } from "../config/socket";
 
 const DashBoard = () => {
 
@@ -34,8 +35,17 @@ const DashBoard = () => {
   useEffect(() => {
     if (isUserReady) {
       fetchProjects();
+      // --- Real-time: join socket and listen for project-list-updated ---
+      const socket = initializeSocket();
+      if (user && user._id) {
+        socket.emit('join-dashboard', user._id);
+      }
+      receiveMessage('project-list-updated', () => {
+        fetchProjects();
+      });
     }
-  }, [isUserReady]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isUserReady, user]);
 
   async function createProject(e) {
     e.preventDefault();
