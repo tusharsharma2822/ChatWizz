@@ -171,12 +171,21 @@ export const getProjectMessages = async (req, res) => {
 
 export const addMessage = async (req, res) => {
     try {
+        console.log('addMessage req.user:', req.user);
+        console.log('addMessage req.body:', req.body);
         const { projectId, message } = req.body;
+        if (!req.user || !req.user._id) {
+            return res.status(401).json({ error: 'Unauthorized: user not found in token' });
+        }
+        if (!projectId || !message) {
+            return res.status(400).json({ error: 'projectId and message are required' });
+        }
         const sender = req.user._id;
         const newMessage = await Message.create({ projectId, sender, message });
         await newMessage.populate('sender', 'email');
         res.status(201).json({ message: newMessage });
     } catch (err) {
+        console.log('addMessage error:', err);
         res.status(500).json({ error: err.message });
     }
 };
